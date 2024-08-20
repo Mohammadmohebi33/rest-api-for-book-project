@@ -11,6 +11,8 @@ type jsonResponse struct {
 	Data    interface{} `json:"data"`
 }
 
+type envelope map[string]interface{}
+
 func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 
 	type credentials struct {
