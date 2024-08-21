@@ -64,8 +64,11 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send back a response
-	payload.Error = false
-	payload.Message = "Signed in"
+	payload = jsonResponse{
+		Error:   false,
+		Message: "logged in",
+		Data:    envelope{"token": token},
+	}
 
 	err = app.writeJSON(w, http.StatusOK, payload)
 
