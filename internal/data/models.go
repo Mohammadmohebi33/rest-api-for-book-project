@@ -148,8 +148,8 @@ func (u *User) Update() error {
 		first_name = $2,
 		last_name = $3,
         user_active = $4,
-		updated_at = $4
-		where id = $5
+		updated_at = $5
+		where id = $6
 	`
 
 	_, err := db.ExecContext(ctx, stmt,
