@@ -18,6 +18,27 @@ type jsonResponse struct {
 
 type envelope map[string]interface{}
 
+func (app *application) register(w http.ResponseWriter, r *http.Request) {
+	var user data.User
+	var payload jsonResponse
+
+	err := app.readJSON(w, r, &user)
+	if err != nil {
+		app.errorLog.Println(err)
+		payload.Error = true
+		payload.Message = "invalid json supplied, or json missing entirelyyyyyyyyyyy"
+		_ = app.writeJSON(w, http.StatusBadRequest, payload)
+	}
+
+	user.Active = 0
+
+	_, err = user.Insert(user)
+	if err != nil {
+		app.errorLog.Println(err)
+	}
+
+}
+
 func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 
 	type credentials struct {
