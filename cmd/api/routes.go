@@ -21,31 +21,39 @@ func (app *application) routes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	mux.Post("/users/register", app.register)
 	mux.Post("/users/login", app.Login)
 	mux.Post("/users/logout", app.Logout)
 
+	mux.Post("/books", app.AllBooks)
 	mux.Get("/books", app.AllBooks)
 	mux.Get("/books/{slug}", app.OneBook)
-	mux.Get("/authors/all", app.AuthorsAll)
-	mux.Post("/books/save", app.EditBook)
-	mux.Post("/users/delete", app.DeleteUser)
-	mux.Post("/books/{id}", app.BookByID)
+
 	mux.Post("/validate-token", app.ValidateToken)
 
+	// all routes in the block below are prefixed with /admin, and also
+	// require that the user have a valid token provided in the request, since
+	// this block uses the AuthTokenMiddleware
 	mux.Route("/admin", func(mux chi.Router) {
 		mux.Use(app.AuthTokenMiddleware)
 
+		// admin user routes
 		mux.Post("/users", app.AllUsers)
 		mux.Post("/users/save", app.EditUser)
 		mux.Post("/users/get/{id}", app.GetUser)
 		mux.Post("/users/delete", app.DeleteUser)
 		mux.Post("/log-user-out/{id}", app.LogUserOutAndSetInactive)
+
+		// admin book routes
+		mux.Post("/authors/all", app.AuthorsAll)
+		mux.Post("/books/save", app.EditBook)
+		mux.Post("/books/delete", app.DeleteBook)
+		mux.Post("/books/{id}", app.BookByID)
+
 	})
 
-	fileserver := http.FileServer(http.Dir("./static/"))
-
-	mux.Handle("/static/*", http.StripPrefix("/static/", fileserver))
+	// static files
+	fileServer := http.FileServer(http.Dir("./static/"))
+	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	return mux
 }
