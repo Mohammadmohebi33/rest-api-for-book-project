@@ -28,6 +28,7 @@ func (app *application) routes() http.Handler {
 	mux.Get("/books", app.AllBooks)
 	mux.Get("/books/{slug}", app.OneBook)
 	mux.Get("/authors/all", app.AuthorsAll)
+	mux.Post("/books/save", app.EditBook)
 
 	mux.Post("/validate-token", app.ValidateToken)
 
